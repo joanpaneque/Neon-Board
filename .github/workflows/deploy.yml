@@ -1,0 +1,62 @@
+name: Auto Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+          SSH_DIR: ${{ secrets.SSH_DIR }}
+        run: |
+          # Install sshpass for password-based SSH
+          sudo apt-get update
+          sudo apt-get install -y sshpass
+          
+          # Create SSH directory if it doesn't exist
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          
+          # Disable host key checking (optional, for known hosts)
+          echo "StrictHostKeyChecking no" >> ~/.ssh/config
+          chmod 600 ~/.ssh/config
+
+      - name: Copy files to server
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+          SSH_DIR: ${{ secrets.SSH_DIR }}
+        run: |
+          # Copy files using rsync with sshpass, respecting .gitignore
+          sshpass -p "$SSH_PASSWORD" rsync -avz --delete \
+            --filter=":- .gitignore" \
+            --exclude '.git' \
+            ./ ${SSH_USER}@${SSH_HOST}:${SSH_DIR}/
+
+      - name: Install dependencies on server
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+          SSH_DIR: ${{ secrets.SSH_DIR }}
+        run: |
+          # Execute npm install on remote server
+          sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no ${SSH_USER}@${SSH_HOST} \
+            "cd ${SSH_DIR} && npm install"
+
+      - name: Deploy complete
+        run: |
+          echo "✅ Deployment completed successfully!"
+
