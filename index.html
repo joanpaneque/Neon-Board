@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Paint</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #000;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            cursor: crosshair;
+        }
+
+        .info {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            font-size: 14px;
+            z-index: 100;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .toolbar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 15px 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            z-index: 100;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .color-label {
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-right: 5px;
+        }
+
+        .color-selector {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .color-button {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .color-button:hover {
+            transform: scale(1.15);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .color-button.active {
+            border-color: #fff;
+            border-width: 3px;
+            transform: scale(1.2);
+        }
+
+        .color-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .size-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-left: 15px;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .size-label {
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            min-width: 45px;
+        }
+
+        .size-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 120px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .size-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .size-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        .size-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .size-slider::-moz-range-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        .uniformity-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-left: 15px;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glow-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-left: 15px;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <div class="color-selector" id="colorSelector"></div>
+        <div class="size-control">
+            <span class="size-label">Grosor</span>
+            <input type="range" class="size-slider" id="sizeSlider" min="1" max="20" value="12" step="0.5">
+        </div>
+        <div class="uniformity-control">
+            <span class="size-label">Variación</span>
+            <input type="range" class="size-slider" id="uniformitySlider" min="0" max="100" value="100" step="1">
+        </div>
+        <div class="glow-control">
+            <span class="size-label">Glow</span>
+            <input type="range" class="size-slider" id="glowSlider" min="0" max="50" value="15" step="1">
+        </div>
+    </div>
+    
+    <canvas id="canvas"></canvas>
+    <script type="module" src="/app.js"></script>
+</body>
+</html>
+
