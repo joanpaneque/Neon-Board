@@ -95,6 +95,8 @@ class NeonPaintApp {
         // Initialize UI
         this.uiController = new UIController(this.colorManager, this.config, this.recordingManager);
         this.setupUI();
+        this.uiController.setupMobileMenu();
+        this.uiController.setupDesktopSlidersDropdown();
 
         // Initialize history with initial state
         setTimeout(() => {

@@ -14,23 +14,40 @@ export class UIController {
      */
     updateColorSelector() {
         const colorSelector = document.getElementById('colorSelector');
-        if (!colorSelector) return;
-
-        colorSelector.innerHTML = '';
-
+        const mobileColorSelector = document.getElementById('mobileColorSelector');
+        
         const colors = this.colorManager.getAllColors();
         const currentIndex = this.colorManager.getCurrentIndex();
 
-        colors.forEach((color, index) => {
-            const button = document.createElement('div');
-            button.className = `color-button ${index === currentIndex ? 'active' : ''}`;
-            button.style.color = color.main;
-            button.addEventListener('click', () => {
-                this.colorManager.setColor(index);
-                this.updateColorSelector();
+        // Update desktop selector
+        if (colorSelector) {
+            colorSelector.innerHTML = '';
+            colors.forEach((color, index) => {
+                const button = document.createElement('div');
+                button.className = `color-button ${index === currentIndex ? 'active' : ''}`;
+                button.style.color = color.main;
+                button.addEventListener('click', () => {
+                    this.colorManager.setColor(index);
+                    this.updateColorSelector();
+                });
+                colorSelector.appendChild(button);
             });
-            colorSelector.appendChild(button);
-        });
+        }
+
+        // Update mobile selector
+        if (mobileColorSelector) {
+            mobileColorSelector.innerHTML = '';
+            colors.forEach((color, index) => {
+                const button = document.createElement('div');
+                button.className = `color-button ${index === currentIndex ? 'active' : ''}`;
+                button.style.color = color.main;
+                button.addEventListener('click', () => {
+                    this.colorManager.setColor(index);
+                    this.updateColorSelector();
+                });
+                mobileColorSelector.appendChild(button);
+            });
+        }
     }
 
     /**
@@ -39,13 +56,27 @@ export class UIController {
      */
     setupSizeSlider(onChange) {
         const sizeSlider = document.getElementById('sizeSlider');
-        if (!sizeSlider) return;
+        const mobileSizeSlider = document.getElementById('mobileSizeSlider');
 
-        sizeSlider.value = this.config.maxWidth;
-        sizeSlider.addEventListener('input', (e) => {
-            const value = parseFloat(e.target.value);
+        const updateValue = (value) => {
+            if (sizeSlider) sizeSlider.value = value;
+            if (mobileSizeSlider) mobileSizeSlider.value = value;
             onChange(value);
-        });
+        };
+
+        if (sizeSlider) {
+            sizeSlider.value = this.config.maxWidth;
+            sizeSlider.addEventListener('input', (e) => {
+                updateValue(parseFloat(e.target.value));
+            });
+        }
+
+        if (mobileSizeSlider) {
+            mobileSizeSlider.value = this.config.maxWidth;
+            mobileSizeSlider.addEventListener('input', (e) => {
+                updateValue(parseFloat(e.target.value));
+            });
+        }
     }
 
     /**
@@ -54,13 +85,27 @@ export class UIController {
      */
     setupUniformitySlider(onChange) {
         const uniformitySlider = document.getElementById('uniformitySlider');
-        if (!uniformitySlider) return;
+        const mobileUniformitySlider = document.getElementById('mobileUniformitySlider');
 
-        uniformitySlider.value = this.config.uniformityFactor;
-        uniformitySlider.addEventListener('input', (e) => {
-            const value = parseFloat(e.target.value);
+        const updateValue = (value) => {
+            if (uniformitySlider) uniformitySlider.value = value;
+            if (mobileUniformitySlider) mobileUniformitySlider.value = value;
             onChange(value);
-        });
+        };
+
+        if (uniformitySlider) {
+            uniformitySlider.value = this.config.uniformityFactor;
+            uniformitySlider.addEventListener('input', (e) => {
+                updateValue(parseFloat(e.target.value));
+            });
+        }
+
+        if (mobileUniformitySlider) {
+            mobileUniformitySlider.value = this.config.uniformityFactor;
+            mobileUniformitySlider.addEventListener('input', (e) => {
+                updateValue(parseFloat(e.target.value));
+            });
+        }
     }
 
     /**
@@ -69,13 +114,27 @@ export class UIController {
      */
     setupGlowSlider(onChange) {
         const glowSlider = document.getElementById('glowSlider');
-        if (!glowSlider) return;
+        const mobileGlowSlider = document.getElementById('mobileGlowSlider');
 
-        glowSlider.value = this.config.glowLevel;
-        glowSlider.addEventListener('input', (e) => {
-            const value = parseFloat(e.target.value);
+        const updateValue = (value) => {
+            if (glowSlider) glowSlider.value = value;
+            if (mobileGlowSlider) mobileGlowSlider.value = value;
             onChange(value);
-        });
+        };
+
+        if (glowSlider) {
+            glowSlider.value = this.config.glowLevel;
+            glowSlider.addEventListener('input', (e) => {
+                updateValue(parseFloat(e.target.value));
+            });
+        }
+
+        if (mobileGlowSlider) {
+            mobileGlowSlider.value = this.config.glowLevel;
+            mobileGlowSlider.addEventListener('input', (e) => {
+                updateValue(parseFloat(e.target.value));
+            });
+        }
     }
 
     /**
@@ -161,6 +220,79 @@ export class UIController {
             if (e.target === modal) {
                 closeModal();
             }
+        });
+    }
+
+    /**
+     * Sets up mobile menu toggle
+     */
+    setupMobileMenu() {
+        const toggleBtn = document.getElementById('mobileMenuToggle');
+        const menuPanel = document.getElementById('mobileMenuPanel');
+
+        if (!toggleBtn || !menuPanel) return;
+
+        toggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isActive = menuPanel.classList.contains('active');
+            
+            if (isActive) {
+                menuPanel.classList.remove('active');
+                toggleBtn.classList.remove('active');
+            } else {
+                menuPanel.classList.add('active');
+                toggleBtn.classList.add('active');
+            }
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (menuPanel.classList.contains('active') && 
+                !menuPanel.contains(e.target) && 
+                e.target !== toggleBtn &&
+                !toggleBtn.contains(e.target)) {
+                menuPanel.classList.remove('active');
+                toggleBtn.classList.remove('active');
+            }
+        });
+    }
+
+    /**
+     * Sets up desktop sliders dropdown
+     */
+    setupDesktopSlidersDropdown() {
+        const slidersButton = document.getElementById('slidersButton');
+        const slidersDropdown = document.getElementById('slidersDropdown');
+
+        if (!slidersButton || !slidersDropdown) return;
+
+        slidersButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isActive = slidersDropdown.classList.contains('active');
+            
+            if (isActive) {
+                slidersDropdown.classList.remove('active');
+                slidersButton.classList.remove('active');
+            } else {
+                slidersDropdown.classList.add('active');
+                slidersButton.classList.add('active');
+            }
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (slidersDropdown.classList.contains('active') && 
+                !slidersDropdown.contains(e.target) && 
+                e.target !== slidersButton &&
+                !slidersButton.contains(e.target)) {
+                slidersDropdown.classList.remove('active');
+                slidersButton.classList.remove('active');
+            }
+        });
+
+        // Prevent closing when clicking inside dropdown
+        slidersDropdown.addEventListener('click', (e) => {
+            e.stopPropagation();
         });
     }
 }

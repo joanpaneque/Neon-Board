@@ -18,11 +18,13 @@
             min-height: 100vh;
             background: #000;
             overflow: hidden;
+            touch-action: none;
         }
 
         canvas {
             display: block;
             cursor: crosshair;
+            touch-action: none;
         }
 
         .info {
@@ -51,6 +53,149 @@
             align-items: center;
             z-index: 100;
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            flex-wrap: nowrap;
+            white-space: nowrap;
+        }
+
+        /* Desktop Sliders Button */
+        .sliders-button {
+            padding: 8px 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            padding-left: 15px;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sliders-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: scale(1.05);
+        }
+
+        .sliders-button.active {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        .sliders-button svg {
+            width: 12px;
+            height: 12px;
+            fill: #fff;
+            margin-left: 8px;
+            transition: transform 0.3s ease;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .sliders-button.active svg {
+            transform: rotate(180deg);
+        }
+
+        /* Desktop Sliders Dropdown */
+        .sliders-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px 20px;
+            min-width: 280px;
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 102;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: translateX(-50%) translateY(-10px);
+        }
+
+        .sliders-dropdown.active {
+            display: flex;
+            opacity: 1;
+            pointer-events: all;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .sliders-dropdown-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sliders-dropdown-label {
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sliders-dropdown-slider {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .sliders-dropdown-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .sliders-dropdown-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        .sliders-dropdown-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .sliders-dropdown-slider::-moz-range-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        /* Hide individual sliders on desktop */
+        .size-control,
+        .uniformity-control,
+        .glow-control {
+            display: none !important;
+        }
+
+        .sliders-container {
+            position: relative;
+            padding-left: 15px;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .color-label {
@@ -335,26 +480,307 @@
         .modal-button.primary:hover {
             background: rgba(0, 150, 255, 0.5);
         }
+
+        /* Mobile Menu Toggle Button */
+        .mobile-menu-toggle {
+            display: none;
+        }
+
+        .mobile-menu-toggle-btn {
+            position: fixed;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            z-index: 101;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu-toggle-btn:hover {
+            transform: translateX(-50%) scale(1.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .mobile-menu-toggle-btn.active {
+            transform: translateX(-50%) rotate(180deg);
+        }
+
+        .mobile-menu-toggle-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: #fff;
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-menu-toggle-btn:hover svg {
+            fill: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Mobile Menu Panel */
+        .mobile-menu-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 100;
+            padding: 70px 20px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .mobile-menu-panel.active {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateY(0);
+        }
+
+        .mobile-menu-colors {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            padding: 10px 0;
+        }
+
+        .mobile-menu-control {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-menu-control:last-child {
+            border-bottom: none;
+        }
+
+        .mobile-menu-control-label {
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .mobile-menu-slider {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .mobile-menu-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .mobile-menu-slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: #fff;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .toolbar {
+                display: none;
+            }
+
+            .sliders-container {
+                display: none;
+            }
+
+            .size-control,
+            .uniformity-control,
+            .glow-control {
+                display: none;
+            }
+
+            .modal-content {
+                padding: 20px;
+                width: 95%;
+                max-width: 95%;
+            }
+
+            .modal-title {
+                font-size: 14px;
+            }
+
+            .modal-textarea {
+                height: 300px;
+                font-size: 11px;
+                padding: 12px;
+            }
+
+            .modal-button {
+                padding: 8px 16px;
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .mobile-menu-toggle-btn {
+                width: 45px;
+                height: 45px;
+                top: 10px;
+            }
+
+            .mobile-menu-toggle-btn svg {
+                width: 22px;
+                height: 22px;
+            }
+
+            .mobile-menu-panel {
+                padding: 60px 15px 15px;
+            }
+
+            .mobile-menu-colors {
+                gap: 10px;
+            }
+
+            .mobile-menu-control {
+                padding: 10px 0;
+                gap: 6px;
+            }
+
+            .modal-content {
+                padding: 15px;
+                width: 98%;
+                max-width: 98%;
+            }
+
+            .modal-title {
+                font-size: 12px;
+            }
+
+            .modal-textarea {
+                height: 250px;
+                font-size: 10px;
+                padding: 10px;
+            }
+
+            .modal-button {
+                padding: 6px 12px;
+                font-size: 10px;
+            }
+
+            .modal-buttons {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .modal-button {
+                width: 100%;
+            }
+        }
+
+        /* Prevent text selection on mobile */
+        @media (max-width: 768px) {
+            * {
+                -webkit-tap-highlight-color: transparent;
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                user-select: none;
+            }
+
+            .modal-textarea {
+                -webkit-user-select: text;
+                user-select: text;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Desktop Toolbar -->
     <div class="toolbar">
         <div class="color-selector" id="colorSelector"></div>
-        <div class="size-control">
-            <span class="size-label">Grosor</span>
-            <input type="range" class="size-slider" id="sizeSlider" min="1" max="20" value="12" step="0.5">
-        </div>
-        <div class="uniformity-control">
-            <span class="size-label">Variación</span>
-            <input type="range" class="size-slider" id="uniformitySlider" min="0" max="100" value="100" step="1">
-        </div>
-        <div class="glow-control">
-            <span class="size-label">Glow</span>
-            <input type="range" class="size-slider" id="glowSlider" min="0" max="50" value="15" step="1">
+        <div class="sliders-container">
+            <button class="sliders-button" id="slidersButton">
+                Sliders
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7 10l5 5 5-5z"/>
+                </svg>
+            </button>
+            <div class="sliders-dropdown" id="slidersDropdown">
+                <div class="sliders-dropdown-item">
+                    <span class="sliders-dropdown-label">Grosor</span>
+                    <input type="range" class="sliders-dropdown-slider" id="sizeSlider" min="1" max="20" value="12" step="0.5">
+                </div>
+                <div class="sliders-dropdown-item">
+                    <span class="sliders-dropdown-label">Variación</span>
+                    <input type="range" class="sliders-dropdown-slider" id="uniformitySlider" min="0" max="100" value="100" step="1">
+                </div>
+                <div class="sliders-dropdown-item">
+                    <span class="sliders-dropdown-label">Glow</span>
+                    <input type="range" class="sliders-dropdown-slider" id="glowSlider" min="0" max="50" value="15" step="1">
+                </div>
+            </div>
         </div>
         <div class="recording-control">
             <button class="recording-button" id="startRecordingBtn">Start Recording</button>
             <button class="recording-button" id="stopRecordingBtn" style="display: none;">Stop Recording</button>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Toggle -->
+    <div class="mobile-menu-toggle">
+        <button class="mobile-menu-toggle-btn" id="mobileMenuToggle">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 10l5 5 5-5z"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Mobile Menu Panel -->
+    <div class="mobile-menu-panel" id="mobileMenuPanel">
+        <div class="mobile-menu-colors" id="mobileColorSelector"></div>
+        <div class="mobile-menu-control">
+            <span class="mobile-menu-control-label">Grosor</span>
+            <input type="range" class="mobile-menu-slider" id="mobileSizeSlider" min="1" max="20" value="12" step="0.5">
+        </div>
+        <div class="mobile-menu-control">
+            <span class="mobile-menu-control-label">Variación</span>
+            <input type="range" class="mobile-menu-slider" id="mobileUniformitySlider" min="0" max="100" value="100" step="1">
+        </div>
+        <div class="mobile-menu-control">
+            <span class="mobile-menu-control-label">Glow</span>
+            <input type="range" class="mobile-menu-slider" id="mobileGlowSlider" min="0" max="50" value="15" step="1">
         </div>
     </div>
     
