@@ -7,6 +7,7 @@ export class EventHandler {
         this.canvasManager = canvasManager;
         this.drawingController = drawingController;
         this.keyboardHandler = keyboardHandler;
+        this.isMultiTouchGesture = false; // Flag to prevent drawing during multi-touch gestures
         this.setupMouseEvents();
         this.setupTouchEvents();
         this.setupKeyboardEvents();
@@ -45,19 +46,61 @@ export class EventHandler {
 
         canvas.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            const coords = this.canvasManager.getCanvasCoordinates(e);
-            this.drawingController.startDrawing(coords.x, coords.y);
+            
+            const touchCount = e.touches.length;
+            
+            // Multi-touch gestures: 2 fingers = undo, 3 fingers = redo
+            if (touchCount === 2) {
+                this.isMultiTouchGesture = true;
+                this.drawingController.undo();
+                return;
+            }
+            
+            if (touchCount === 3) {
+                this.isMultiTouchGesture = true;
+                this.drawingController.redo();
+                return;
+            }
+            
+            // Single touch: normal drawing
+            if (touchCount === 1) {
+                this.isMultiTouchGesture = false;
+                const coords = this.canvasManager.getCanvasCoordinates(e);
+                this.drawingController.startDrawing(coords.x, coords.y);
+            }
         });
 
         canvas.addEventListener('touchmove', (e) => {
             e.preventDefault();
+            
+            // Don't draw if we're in a multi-touch gesture
+            if (this.isMultiTouchGesture) {
+                return;
+            }
+            
             const coords = this.canvasManager.getCanvasCoordinates(e);
             this.drawingController.continueDrawing(coords.x, coords.y);
         });
 
         canvas.addEventListener('touchend', (e) => {
             e.preventDefault();
-            this.drawingController.stopDrawing();
+            
+            // If no touches remain or we're in a multi-touch gesture, reset
+            if (e.touches.length === 0) {
+                if (!this.isMultiTouchGesture) {
+                    this.drawingController.stopDrawing();
+                }
+                this.isMultiTouchGesture = false;
+            }
+        });
+
+        canvas.addEventListener('touchcancel', (e) => {
+            e.preventDefault();
+            // Reset gesture state on touch cancel
+            if (!this.isMultiTouchGesture) {
+                this.drawingController.stopDrawing();
+            }
+            this.isMultiTouchGesture = false;
         });
     }
 
