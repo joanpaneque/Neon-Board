@@ -3,9 +3,10 @@
  * Manages UI and its interactions
  */
 export class UIController {
-    constructor(colorManager, config) {
+    constructor(colorManager, config, recordingManager = null) {
         this.colorManager = colorManager;
         this.config = config;
+        this.recordingManager = recordingManager;
     }
 
     /**
@@ -74,6 +75,92 @@ export class UIController {
         glowSlider.addEventListener('input', (e) => {
             const value = parseFloat(e.target.value);
             onChange(value);
+        });
+    }
+
+    /**
+     * Sets up recording controls
+     * @param {Function} onStartRecording - Callback when recording starts
+     * @param {Function} onStopRecording - Callback when recording stops
+     */
+    setupRecordingControls(onStartRecording, onStopRecording) {
+        const startBtn = document.getElementById('startRecordingBtn');
+        const stopBtn = document.getElementById('stopRecordingBtn');
+        const modal = document.getElementById('pathModal');
+        const pathTextarea = document.getElementById('pathTextarea');
+        const copyBtn = document.getElementById('copyPathBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const closeModalX = document.getElementById('closeModal');
+
+        if (!startBtn || !stopBtn || !modal || !pathTextarea) return;
+
+        // Start recording
+        startBtn.addEventListener('click', () => {
+            if (onStartRecording && this.recordingManager) {
+                this.recordingManager.startRecording();
+                startBtn.style.display = 'none';
+                stopBtn.style.display = 'block';
+                stopBtn.classList.add('recording');
+            }
+        });
+
+        // Stop recording
+        stopBtn.addEventListener('click', () => {
+            if (onStopRecording && this.recordingManager) {
+                const pathExpression = this.recordingManager.stopRecording();
+                
+                if (pathExpression) {
+                    pathTextarea.value = pathExpression;
+                    modal.classList.add('active');
+                } else {
+                    alert('No se grabó ningún dibujo. Dibuja algo antes de detener la grabación.');
+                }
+
+                startBtn.style.display = 'block';
+                stopBtn.style.display = 'none';
+                stopBtn.classList.remove('recording');
+            }
+        });
+
+        // Copy path to clipboard
+        if (copyBtn) {
+            copyBtn.addEventListener('click', async () => {
+                try {
+                    await navigator.clipboard.writeText(pathTextarea.value);
+                    copyBtn.textContent = 'Copied!';
+                    setTimeout(() => {
+                        copyBtn.textContent = 'Copy Path';
+                    }, 2000);
+                } catch (err) {
+                    // Fallback for older browsers
+                    pathTextarea.select();
+                    document.execCommand('copy');
+                    copyBtn.textContent = 'Copied!';
+                    setTimeout(() => {
+                        copyBtn.textContent = 'Copy Path';
+                    }, 2000);
+                }
+            });
+        }
+
+        // Close modal
+        const closeModal = () => {
+            modal.classList.remove('active');
+        };
+
+        if (closeModalBtn) {
+            closeModalBtn.addEventListener('click', closeModal);
+        }
+
+        if (closeModalX) {
+            closeModalX.addEventListener('click', closeModal);
+        }
+
+        // Close modal on background click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeModal();
+            }
         });
     }
 }

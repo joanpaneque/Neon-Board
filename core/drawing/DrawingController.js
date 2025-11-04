@@ -6,12 +6,13 @@ import { DrawingState } from './DrawingState.js';
 import { CANVAS_CONFIG } from '../../config/constants.js';
 
 export class DrawingController {
-    constructor(canvasManager, drawingEngine, brushCalculator, colorManager, historyManager) {
+    constructor(canvasManager, drawingEngine, brushCalculator, colorManager, historyManager, recordingManager = null) {
         this.canvasManager = canvasManager;
         this.drawingEngine = drawingEngine;
         this.brushCalculator = brushCalculator;
         this.colorManager = colorManager;
         this.historyManager = historyManager;
+        this.recordingManager = recordingManager;
         this.drawingState = new DrawingState();
     }
 
@@ -24,6 +25,12 @@ export class DrawingController {
         this.historyManager.saveState();
         const maxWidth = this.brushCalculator.maxWidth;
         this.drawingState.start(x, y, maxWidth);
+        
+        // Record point if recording
+        if (this.recordingManager && this.recordingManager.getIsRecording()) {
+            this.recordingManager.startPath();
+            this.recordingManager.recordPoint(x, y, Date.now());
+        }
     }
 
     /**
@@ -61,6 +68,11 @@ export class DrawingController {
         );
 
         this.drawingState.update(x, y, smoothedWidth);
+        
+        // Record point if recording
+        if (this.recordingManager && this.recordingManager.getIsRecording()) {
+            this.recordingManager.recordPoint(x, y, Date.now());
+        }
     }
 
     /**
@@ -84,6 +96,11 @@ export class DrawingController {
 
             this.historyManager.removeLastState();
             this.historyManager.saveState();
+        }
+
+        // End path recording if recording
+        if (this.recordingManager && this.recordingManager.getIsRecording()) {
+            this.recordingManager.endPath();
         }
 
         this.brushCalculator.reset();

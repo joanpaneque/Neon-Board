@@ -10,6 +10,7 @@ import { BrushCalculator } from './core/drawing/BrushCalculator.js';
 import { DrawingEngine } from './core/drawing/DrawingEngine.js';
 import { HistoryManager } from './core/history/HistoryManager.js';
 import { DrawingController } from './core/drawing/DrawingController.js';
+import { RecordingManager } from './core/recording/RecordingManager.js';
 import { KeyboardHandler } from './utils/KeyboardHandler.js';
 import { UIController } from './ui/UIController.js';
 import { EventHandler } from './ui/EventHandler.js';
@@ -32,6 +33,7 @@ class NeonPaintApp {
         this.drawingEngine = null;
         this.historyManager = null;
         this.drawingController = null;
+        this.recordingManager = null;
         this.keyboardHandler = null;
         this.uiController = null;
         this.eventHandler = null;
@@ -69,13 +71,17 @@ class NeonPaintApp {
             HISTORY_CONFIG.MAX_SIZE
         );
 
+        // Initialize recording manager
+        this.recordingManager = new RecordingManager(this.canvasManager);
+
         // Initialize drawing controller
         this.drawingController = new DrawingController(
             this.canvasManager,
             this.drawingEngine,
             this.brushCalculator,
             this.colorManager,
-            this.historyManager
+            this.historyManager,
+            this.recordingManager
         );
 
         // Initialize event handlers
@@ -87,7 +93,7 @@ class NeonPaintApp {
         );
 
         // Initialize UI
-        this.uiController = new UIController(this.colorManager, this.config);
+        this.uiController = new UIController(this.colorManager, this.config, this.recordingManager);
         this.setupUI();
 
         // Initialize history with initial state
@@ -143,6 +149,19 @@ class NeonPaintApp {
             this.drawingEngine.setGlowLevel(value);
             this.saveConfig();
         });
+
+        // Setup recording controls
+        this.uiController.setupRecordingControls(
+            () => {
+                // onStartRecording callback
+                this.recordingManager.startRecording();
+            },
+            () => {
+                // onStopRecording callback
+                const pathExpression = this.recordingManager.stopRecording();
+                return pathExpression;
+            }
+        );
     }
 }
 
